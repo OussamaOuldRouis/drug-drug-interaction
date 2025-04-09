@@ -4,8 +4,8 @@
 import os
 import sys
 
-# Add the current directory to the Python path
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+# Add the parent directory to the Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Import the create_app function from the app module
 from src.web.app import create_app
