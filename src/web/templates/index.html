@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drug Interaction Assistant</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="bg-blue-600 text-white rounded-lg shadow-lg p-6 mb-8">
+            <h1 class="text-3xl font-bold">Drug Interaction Assistant</h1>
+            <p class="mt-2">Powered by BiomedLM - Ask about drug interactions, drug information, or analyze clinical notes</p>
+        </header>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h2 class="text-xl font-semibold mb-4">Chat with the Drug Interaction Assistant</h2>
+                    <div id="chat-history" class="bg-gray-50 p-4 rounded-lg mb-4 h-96 overflow-y-auto">
+                        <div class="chat-message bot">
+                            <p class="p-3 rounded-lg bg-blue-100 inline-block">Hello! I'm your Drug Interaction Assistant. You can ask me about drug interactions, get drug information, or have me analyze clinical notes.</p>
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <input id="user-input" type="text" placeholder="Type your question here..." 
+                            class="flex-grow p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button id="send-btn" class="bg-blue-600 text-white px-6 py-3 rounded-r-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            Send
+                        </button>
+                    </div>
+                    <div class="text-sm text-gray-600 mt-2">
+                        Example questions: "Can I take aspirin and warfarin together?", "Tell me about metformin", "Analyze this clinical note: Patient is taking..."
+                    </div>
+                </div>
+            </div>
+            
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+                    <h2 class="text-xl font-semibold mb-4">Drug Interaction Visualization</h2>
+                    <div id="visualization-container" class="h-80 flex items-center justify-center bg-gray-50 rounded-lg">
+                        <p class="text-gray-500">Interaction visualizations will appear here</p>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-semibold mb-4">Drug Information</h2>
+                    <div id="drug-info-container" class="bg-gray-50 p-4 rounded-lg">
+                        <p class="text-gray-500">Select a drug to see detailed information</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatHistory = document.getElementById('chat-history');
+            const userInput = document.getElementById('user-input');
+            const sendBtn = document.getElementById('send-btn');
+            const vizContainer = document.getElementById('visualization-container');
+            const drugInfoContainer = document.getElementById('drug-info-container');
+            
+            // Send message function
+            const sendMessage = () => {
+                const message = userInput.value.trim();
+                if (!message) return;
+                
+                // Add user message to chat
+                const userMsg = document.createElement('div');
+                userMsg.className = 'chat-message user text-right mt-4';
+                userMsg.innerHTML = `<p class="p-3 rounded-lg bg-green-100 inline-block">${message}</p>`;
+                chatHistory.appendChild(userMsg);
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+                
+                // Clear input
+                userInput.value = '';
+                
+                // Show loading indicator
+                const loadingMsg = document.createElement('div');
+                loadingMsg.className = 'chat-message bot mt-4';
+                loadingMsg.innerHTML = `<p class="p-3 rounded-lg bg-blue-100 inline-block">Thinking...</p>`;
+                chatHistory.appendChild(loadingMsg);
+                chatHistory.scrollTop = chatHistory.scrollHeight;
+                
+                // Call API
+                fetch('/api/ask', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Remove loading message
+                    chatHistory.removeChild(loadingMsg);
+                    
+                    // Add bot response
+                    const botMsg = document.createElement('div');
+                    botMsg.className = 'chat-message bot mt-4';
+                    botMsg.innerHTML = `<p class="p-3 rounded-lg bg-blue-100 inline-block">${data.response.replace(/\n/g, '<br>')}</p>`;
+                    chatHistory.appendChild(botMsg);
+                    chatHistory.scrollTop = chatHistory.scrollHeight;
+                    
+                    // Update visualization if available
+                    if (data.visualization) {
+                        vizContainer.innerHTML = `<img src="${data.visualization}" alt="Drug interaction visualization" class="max-w-full max-h-full">`;
+                    }
+                })
+                .catch(err => {
+                    // Remove loading message
+                    chatHistory.removeChild(loadingMsg);
+                    
+                    // Add error message
+                    const errorMsg = document.createElement('div');
+                    errorMsg.className = 'chat-message bot mt-4';
+                    errorMsg.innerHTML = `<p class="p-3 rounded-lg bg-red-100 inline-block">Sorry, something went wrong. Please try again.</p>`;
+                    chatHistory.appendChild(errorMsg);
+                    chatHistory.scrollTop = chatHistory.scrollHeight;
+                    console.error(err);
+                });
+            };
+            
+            // Event listeners
+            sendBtn.addEventListener('click', sendMessage);
+            userInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage();
+            });
+        });
+    </script>
+</body>
+</html> 
