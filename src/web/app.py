@@ -10,13 +10,15 @@ from ..models.chatbot import DrugInteractionChatbot
 
 def create_app():
     """Create and configure the Flask application"""
-    app = Flask(__name__)
+    app = Flask(__name__, 
+                static_folder='static',
+                template_folder='templates')
     
     # Initialize the chatbot
     chatbot = DrugInteractionChatbot()
     
     # Ensure the visualization directory exists
-    os.makedirs("static/visualizations", exist_ok=True)
+    os.makedirs(os.path.join(app.static_folder, "visualizations"), exist_ok=True)
     
     @app.route('/')
     def home():
@@ -60,7 +62,8 @@ def create_app():
             
             if not error:
                 # Save the visualization to a file
-                plt.savefig(f"static/visualizations/{viz_id}.png")
+                viz_path = os.path.join(app.static_folder, "visualizations", f"{viz_id}.png")
+                plt.savefig(viz_path)
                 plt.close()
                 
                 # Add the URL to the result
@@ -180,10 +183,7 @@ def create_app():
     
     return app
 
-def run_app():
-    """Run the Flask application"""
-    app = create_app()
-    app.run(debug=True, host='0.0.0.0', port=5000)
-
 if __name__ == "__main__":
-    run_app() 
+    app = create_app()
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port) 
