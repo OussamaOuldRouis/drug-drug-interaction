@@ -1,140 +1,36 @@
-# Drug Interaction Analysis System
+# Drug Interaction Assistant
 
-A comprehensive system for analyzing drug interactions using biomedical language models and network analysis.
+A Streamlit application that helps users analyze drug interactions, get information about medications, and visualize drug interaction networks. Powered by biomedical language models.
 
-## Overview
+## Features
 
-This project implements an advanced drug interaction analysis system that combines multiple approaches to provide comprehensive drug interaction information:
+- **Drug Interaction Analysis**: Check potential interactions between medications
+- **Drug Information**: Get detailed information about specific drugs
+- **Clinical Note Analysis**: Extract medications and potential interactions from clinical notes
+- **Visualization**: Generate network visualizations of drug interactions
 
-1. **Biomedical Language Model Integration**: Utilizes state-of-the-art biomedical language models (BioMedLM) to analyze drug interactions and extract information from medical literature.
-2. **Drug Interaction Database**: Maintains a curated database of known drug interactions with severity levels and evidence sources.
-3. **Network Analysis**: Visualizes drug interaction networks to help understand complex medication relationships.
-4. **Clinical Notes Analysis**: Extracts medication information and potential interactions from clinical notes.
+## How to Use
 
-## Key Features
+1. **Chat with the Assistant**: Ask questions about drug interactions, drug information, or request analysis of clinical notes
+2. **Drug Information**: Search for a specific drug to get detailed information
+3. **Clinical Note Analysis**: Enter clinical notes to extract medications and potential interactions
 
-### 1. Drug Interaction Analysis
-- Query specific drug pairs for interaction information
-- Get severity levels (Mild, Moderate, Severe)
-- Access evidence sources and management recommendations
-- View interaction networks and visualizations
+## Example Questions
 
-### 2. Drug Information Retrieval
-- Comprehensive drug information including:
-  - Drug class
-  - Mechanism of action
-  - Common indications
-  - Side effects
-  - Common interactions
-  - Contraindications
+- "Can I take aspirin and warfarin together?"
+- "Tell me about metformin"
+- "Analyze this clinical note: Patient is taking..."
+- "Show me a visualization for warfarin"
 
-### 3. Clinical Notes Analysis
-- Extract medications from clinical notes
-- Identify potential drug interactions
-- Analyze medication patterns
-- Generate structured reports
+## Technical Details
 
-### 4. Interactive Visualization
-- Network graphs of drug interactions
-- Color-coded severity indicators
-- Interactive exploration of drug relationships
-- Multi-level interaction depth analysis
+This application uses:
+- Streamlit for the web interface
+- PyTorch and Transformers for the biomedical language model
+- NetworkX for graph visualization
+- Matplotlib for plotting
+## Summary
+![Architecture](diagram.png)
+## Disclaimer
 
-## Technical Implementation
-
-### Core Components
-
-1. **BiomedicalLLM Class**
-   - Handles biomedical language model inference
-   - Processes natural language queries
-   - Extracts structured information from medical literature
-   - Provides fallback mechanisms for robustness
-
-2. **DrugInteractionDatabase Class**
-   - Maintains curated drug interaction data
-   - Handles drug name normalization and aliases
-   - Implements semantic search for drug names
-   - Provides interaction lookup functionality
-
-3. **DDIProcessor Class**
-   - Processes drug interaction queries
-   - Extracts drug names from natural language
-   - Analyzes clinical notes
-   - Generates interaction networks
-
-4. **DrugInteractionChatbot Class**
-   - Provides natural language interface
-   - Handles user queries and responses
-   - Integrates all system components
-   - Formats responses for readability
-
-### Web Interface
-
-The system includes a Flask-based web application with:
-- Interactive chat interface
-- Real-time drug interaction visualization
-- Clinical notes analysis
-- Drug information display
-- Responsive design using Tailwind CSS
-
-## Usage
-
-### Command Line Interface
-```python
-from hi import DrugInteractionChatbot
-
-# Initialize the chatbot
-chatbot = DrugInteractionChatbot()
-
-# Process queries
-response = chatbot.process_message("Can I take aspirin and warfarin together?")
-print(response)
-```
-
-### Web Interface
-```bash
-# Run the web application
-python hi.py web
-```
-
-### Clinical Notes Analysis
-```python
-# Analyze clinical notes
-clinical_text = "Patient is taking metformin 500mg twice daily and warfarin 5mg daily..."
-results = chatbot.processor.extract_drugs_from_clinical_notes(clinical_text)
-```
-
-## Dependencies
-
-- Python 3.7+
-- PyTorch
-- Transformers
-- NetworkX
-- Matplotlib
-- Flask
-- Sentence Transformers
-- scikit-learn
-- pandas
-- numpy
-
-## Installation
-
-1. Clone the repository
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-- Stanford CRFM for BioMedLM
-- The biomedical research community for drug interaction data
-- Open source community for various tools and libraries used in this project 
+This information is for educational purposes only. Always consult a healthcare professional for medical advice. 
