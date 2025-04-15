@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drug Interaction Chatbot</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+        .response-area {
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+            white-space: pre-wrap;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 1rem 0;
+        }
+        .loading-spinner {
+            width: 3rem;
+            height: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="chat-container">
+            <h1 class="text-center mb-4">Drug Interaction Chatbot</h1>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="drug1" class="form-label">First Drug</label>
+                    <input type="text" class="form-control" id="drug1" placeholder="Enter first drug name">
+                </div>
+                <div class="col-md-6">
+                    <label for="drug2" class="form-label">Second Drug</label>
+                    <input type="text" class="form-control" id="drug2" placeholder="Enter second drug name">
+                </div>
+            </div>
+            <div class="text-center mt-3">
+                <button class="btn btn-primary" onclick="queryInteraction()">Check Interaction</button>
+            </div>
+            <div class="loading">
+                <div class="spinner-border loading-spinner text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p>Analyzing drug interaction...</p>
+            </div>
+            <div class="response-area" id="response"></div>
+        </div>
+    </div>
+
+    <script>
+        async function queryInteraction() {
+            const drug1 = document.getElementById('drug1').value;
+            const drug2 = document.getElementById('drug2').value;
+            const responseArea = document.getElementById('response');
+            const loading = document.querySelector('.loading');
+
+            if (!drug1 || !drug2) {
+                alert('Please enter both drug names');
+                return;
+            }
+
+            // Show loading spinner
+            loading.style.display = 'block';
+            responseArea.textContent = '';
+
+            try {
+                const response = await fetch('/query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ drug1, drug2 }),
+                });
+
+                const data = await response.json();
+                
+                if (data.error) {
+                    responseArea.textContent = `Error: ${data.error}`;
+                } else {
+                    responseArea.textContent = data.response;
+                }
+            } catch (error) {
+                responseArea.textContent = `Error: ${error.message}`;
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // Allow Enter key to trigger the query
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                queryInteraction();
+            }
+        });
+    </script>
+</body>
+</html> 

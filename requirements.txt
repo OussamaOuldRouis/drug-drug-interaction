@@ -1,0 +1,8 @@
+pandas==2.1.0
+numpy==1.24.3
+faiss-cpu==1.7.4
+sentence-transformers==2.2.2
+python-dotenv==1.0.0
+flask==2.3.3
+transformers==4.35.0
+torch==2.1.0 
